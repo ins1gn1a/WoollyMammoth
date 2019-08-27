@@ -21,8 +21,10 @@ parser = argparse.ArgumentParser(description='Woolly Mammoth Socket Fuzzer')
 #group = parser.add_mutually_exclusive_group(required=True)
 subparser = parser.add_subparsers(dest="subparser")
 fuzz = subparser.add_parser('fuzz', help='Socket-based fuzzer that allows command prefix (optional)')
-offset = subparser.add_parser('offset', help='Socket-based sending pattern offset that allows command prefix (optional)')
-eip = subparser.add_parser('eip', help='Socket-based sending pattern offset that allows command prefix (optional)')
+offset = subparser.add_parser('offset', help='Sending unique string pattern to identify EIP offset in a debugger.')
+eip = subparser.add_parser('eip', help='Enter the offset pattern hex string to identify the offset value.')
+exploit = subparser.add_parser('exploit', help='Create buffer-overflow exploit on the command line with optional prefix.')
+
 
 #fuzz.add_argument('--fuzz','-f',help='Fuzz value (using optional prefix)',action='store_true',required=False,default=False,dest='fuzz')
 fuzz.add_argument('--prefix',help='Enter the prefix for the command',required=False,dest='prefix',default="")

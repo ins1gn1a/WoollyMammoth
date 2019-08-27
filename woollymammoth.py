@@ -6,6 +6,8 @@ import sys
 import argparse
 from time import sleep
 
+from colorama import Fore,Style
+
 parser = argparse.ArgumentParser(description='Socket Fuzzer')
 
 parser.add_argument('--prefix',help='Enter the prefix for the command',required=False,dest='prefix',default="")
@@ -33,14 +35,14 @@ def delete_last_lines(n=1):
         sys.stdout.write(CURSOR_UP_ONE)
         sys.stdout.write(ERASE_LINE)
 
-print ("[i] Target:\t" + args.target + ":" + str(args.port))
-print ("[i] Prefix:\t" + args.prefix)
-#print ("[i] ")
+def PrintGreen(text):
+    return (Fore.GREEN + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
 
+def PrintBlue(text):
+    return (Fore.BLUE + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
 
-upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-lower = "abcdefghijklmnopqrstuvwxyz"
-number = "0123456789"
+def PrintRed(text):
+    return (Fore.RED + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
 
 def find_str(s, char):
     index = 0
@@ -55,6 +57,13 @@ def find_str(s, char):
             index += 1
 
     return -1
+
+print (PrintBlue("[i]") + " Target:\t\t" + args.target + ":" + str(args.port))
+print (PrintBlue("[i]") + " Prefix:\t\t" + args.prefix)
+
+upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+lower = "abcdefghijklmnopqrstuvwxyz"
+number = "0123456789"
 
 for u in upper:
     for l in lower:
@@ -75,14 +84,14 @@ if args.fuzz:
             bufLength = (len(buffer) - len(args.prefix))
             prevBufLength = bufLength
             delete_last_lines()
-            print("[i] Fuzzing:\t" + str(bufLength) + " Bytes")
+            print(PrintBlue("[i]") + " Fuzzing:\t\t" + str(bufLength) + " Bytes")
             s.close()
             sleep(0.5)
             bufStart += 100
         except:
             print ("\nInformation:")
-            print ("[+] Server crashed between " + str(prevBufLength) + " and %s Bytes" % str(len(buffer) - len(args.prefix)))
-            print ("[!] Send offset pattern using '-o' to identify EIP offset")
+            print (PrintGreen("[+]") + " Server crashed between " + str(prevBufLength) + " and %s Bytes" % str(len(buffer) - len(args.prefix)))
+            print (PrintRed("[!]") + " Send offset pattern using '-o' to identify EIP offset")
             sys.exit()
             
         buffer = args.prefix + bufRan[:bufStart]
@@ -99,7 +108,7 @@ elif (args.offset):
         sleep(0.5)
         bufStart += 100
         print ("\nInformation:")
-        print ("[!] Check EIP for offset value")
+        print (PrintRed("[!]") + " Check EIP for offset value")
     except:
         sys.exit()
         
@@ -112,10 +121,10 @@ elif (args.eip):
         offsetAscii = (bytearray.fromhex(offsetHex).decode())[::-1]
         offsetPosition = find_str(bufRan,offsetAscii)
 
-    print ("[i] EIP Value: \t\t" + offsetHex)
-    print ("[i] EIP Value ASCII: \t" + offsetAscii)
-    print ("[+] Offset Position: \t" + str(offsetPosition))
+    print (PrintBlue("[i]") + " EIP Value: \t\t" + offsetHex)
+    print (PrintBlue("[i]") + " EIP Value ASCII: \t" + offsetAscii)
+    print (PrintGreen("[+]") + " Offset Position: \t" + str(offsetPosition))
     print ("\nNext Steps:")
-    print ("[!] Locate vulnerable libraries with Mona: !mona modules")
-    print ('[!] Identify valid JMP with Mona: !mona find -s "\\xff\\xe4" -m "essfunc.dll"')
-    print ('[!] Identify valid PUSH RET with Mona: !mona find -s "\\x5c\\xc3" -m "essfunc.dll"')
+    print (PrintRed("[!]") + " Locate vulnerable libraries with Mona: !mona modules")
+    print (PrintRed("[!]") + ' Identify valid JMP with Mona: !mona find -s "\\xff\\xe4" -m "essfunc.dll"')
+    print (PrintRed("[!]") + ' Identify valid PUSH RET with Mona: !mona find -s "\\x5c\\xc3" -m "essfunc.dll"')

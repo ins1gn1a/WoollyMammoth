@@ -91,7 +91,7 @@ def main():
         port = ""
         
     bufRan = ""
-    bufStart = 100
+    bufStart = 50
 
     upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     lower = "abcdefghijklmnopqrstuvwxyz"
@@ -120,7 +120,7 @@ def main():
                 print(PrintBlue("[i]") + " Fuzzing:\t\t" + str(bufLength) + " Bytes", end='\r')
                 s.close()
                 sleep(0.5)
-                bufStart += 100
+                bufStart += 50
             except:
                 print (sys.exc_info())
                 print ("\nInformation:")

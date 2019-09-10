@@ -109,15 +109,15 @@ usage: woollymammoth.py carve [-h] --shellcode EGGHUNTER [--esp CURR_ESP]
 
 optional arguments:
   -h, --help            show this help message and exit
-
-Required Arguments:
-  --shellcode EGGHUNTER, -s EGGHUNTER
-                        Enter the shellcode to be converted (e.g. an
-                        egghunter)
   --esp CURR_ESP, -e CURR_ESP
                         Enter the ESP value at the start of the carved
                         shellcode
   --dest-esp DEST_ESP, -d DEST_ESP
                         Enter the address that should contain the carved
                         shellcode
+
+Required Arguments:
+  --shellcode EGGHUNTER, -s EGGHUNTER
+                        Enter the shellcode to be converted (e.g. an
+                        egghunter)
 ```

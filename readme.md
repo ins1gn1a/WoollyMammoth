@@ -1,5 +1,12 @@
 # WoollyMammoth
 
+## Features
+* Basic network service fuzzer
+* EIP offset pattern creator
+* Offset pattern detector
+* Vanilla EIP overwrite exploiter
+* Shellcode carver (egghunters, larger payloads, anything!)
+
 ## Installation
 ```
 git clone https://github.com/ins1gn1a/WoollyMammoth

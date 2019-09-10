@@ -335,6 +335,15 @@ def main():
     elif (args.subparser == "carve"):
         a = args.egghunter.replace("\\x","")
         
+        # Zero EAX
+        print ("\x25\x4a\x4d\x4e\x55")
+        print ("\x25\x35\x32\x31\x2a")
+        
+        # Save ESP into EAX
+        print ("\x54\x58")
+        
+        
+        
         for x in allChar:
             if x not in badChars:
                 

@@ -11,12 +11,12 @@ pip3 install -r requirements.txt
 
 ```
 ./woollymammoth.py -h
-usage: woollymammoth.py [-h] {fuzz,offset,eip,exploit} ...
+usage: woollymammoth.py [-h] {fuzz,offset,eip,exploit,carve} ...
 
 Woolly Mammoth Socket Fuzzer
 
 positional arguments:
-  {fuzz,offset,eip,exploit}
+  {fuzz,offset,eip,exploit,carve}
     fuzz                Socket-based fuzzer that allows command prefix
                         (optional)
     offset              Sending unique string pattern to identify EIP offset
@@ -25,6 +25,7 @@ positional arguments:
                         offset value.
     exploit             Create buffer-overflow exploit on the command line
                         with optional prefix.
+    carve               Stack manipulation carving
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -98,4 +99,25 @@ Required Arguments:
                         Enter the EIP offset value as an integer.
   --shellcode SHELLCODE, -s SHELLCODE
                         Enter the shellcode for the exploit.
+```
+
+## Carve
+```
+./woollymammoth.py carve -h
+usage: woollymammoth.py carve [-h] --shellcode EGGHUNTER [--esp CURR_ESP]
+                              [--dest-esp DEST_ESP]
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Required Arguments:
+  --shellcode EGGHUNTER, -s EGGHUNTER
+                        Enter the shellcode to be converted (e.g. an
+                        egghunter)
+  --esp CURR_ESP, -e CURR_ESP
+                        Enter the ESP value at the start of the carved
+                        shellcode
+  --dest-esp DEST_ESP, -d DEST_ESP
+                        Enter the address that should contain the carved
+                        shellcode
 ```

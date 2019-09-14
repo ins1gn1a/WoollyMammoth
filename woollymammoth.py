@@ -8,7 +8,7 @@ from time import sleep
 from random import choice
 from colorama import Fore,Style
 
-__version_info__ = ('v1','00')
+__version_info__ = ('v1','01')
 __version__ = '.'.join(__version_info__)
 
 banner = (
@@ -233,6 +233,7 @@ def carveEncode(x):
                 break
         except Exception as e:
             b4=c4=d4=""
+            print (e)
             break
                 
     while row3 != row3Loop:
@@ -244,8 +245,9 @@ def carveEncode(x):
             
             if (a3 - int(str(b3),16) - int(str(c3),16) - int(str(d3),16) == row3Loop):
                 break
-        except:
+        except Exception as e:
             b3=c3=d3=""
+            print (e)
             break               
     
     while row2 != row2Loop:
@@ -257,8 +259,9 @@ def carveEncode(x):
             
             if (a2 - int(str(b2),16) - int(str(c2),16) - int(str(d2),16) == row2Loop):
                 break
-        except:
+        except Exception as e:
             b2=c2=d2=""
+            print (e)
             break    
         
     while row1 != row1Loop:
@@ -272,12 +275,13 @@ def carveEncode(x):
                 break
         except Exception as e:
             b1=c1=d1=""
+            print (e)
             break
 
     carveShellcode += ("\\x2d" +(padAndStrip(b4) + padAndStrip(b3) + padAndStrip(b2) + padAndStrip(b1)))
     carveShellcode += ("\\x2d" +(padAndStrip(c4) + padAndStrip(c3) + padAndStrip(c2) + padAndStrip(c1)))
     carveShellcode += ("\\x2d" +(padAndStrip(d4) + padAndStrip(d3) + padAndStrip(d2) + padAndStrip(d1)))
-  
+
     return
 
 def padAndStrip(byte):
@@ -467,6 +471,8 @@ def main():
         rev = ("".join(reversed([a[i:i+2] for i in range(0, len(a), 2)])))
         n = 8
         rev_list = [rev[i:i+n] for i in range(0, len(rev), n)]
+        totalCarveBytes = len(rev_list)
+        countCarveBytes = 0
         for x in rev_list:
             hex_x = (int(x, 16)) #[2:]
             out = (hex(int("FFFFFFFF",16) - hex_x + int("1",16))[2:])
@@ -481,10 +487,16 @@ def main():
             # PUSH EAX, POP ESP
             carveShellcode += ("\\x50")  
             
+            countCarveBytes += 1
+            print(PrintBlue("[i]") + " Carving:\t\t" + str(countCarveBytes) + "/" + str(totalCarveBytes) + " Complete", end='\r')
+            
         print (PrintGreen("[+]") + " Carved Shellcode Size: {} bytes:\n".format(PrintRed(str(int(len(carveShellcode) / 4)))))
         print ("carvedShell = \"" + carveShellcode + "\"")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(carveShellcode)
 
 

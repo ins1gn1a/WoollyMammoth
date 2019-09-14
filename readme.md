@@ -8,7 +8,7 @@
 * Shellcode carver (egghunters, larger payloads, anything!)
 
 ## Installation
-```
+```bash
 git clone https://github.com/ins1gn1a/WoollyMammoth
 cd WoollyMammoth
 pip3 install -r requirements.txt
@@ -16,7 +16,7 @@ pip3 install -r requirements.txt
 
 ## Overview
 
-```bash
+```
 woollymammoth.py --help
 usage: woollymammoth.py [-h] {fuzz,offset,badchars,eip,exploit,carve} ...
 
@@ -43,7 +43,7 @@ optional arguments:
 ```
 
 ## Fuzzing
-```bash
+```
 ./woollymammoth.py fuzz -h
 usage: woollymammoth.py fuzz [-h] --target TARGET --port PORT
                              [--prefix PREFIX]
@@ -59,7 +59,7 @@ Required Arguments:
 ```
 
 ## Offset
-```bash
+```
 ./woollymammoth.py offset -h
 usage: woollymammoth.py offset [-h] --target TARGET --port PORT
                                [--prefix PREFIX]
@@ -74,7 +74,7 @@ Required Arguments:
   --port PORT, -p PORT  Enter the target port number.
 ```
 ## Bad Chars
-```bash
+```
 woollymammoth.py badchars --help
 usage: woollymammoth.py badchars [-h] --target TARGET --port PORT --buffer
                                  BUFFER [--offset OFFSET] [--prefix PREFIX]
@@ -99,7 +99,7 @@ Required Arguments:
 ```
 
 ## EIP
-```bash
+```
 ./woollymammoth.py eip -h
 usage: woollymammoth.py eip [-h] --eip EIP
 
@@ -111,7 +111,7 @@ Required Arguments:
 ```
 
 ## Exploit
-```bash
+```
 ./woollymammoth.py exploit -h
 usage: woollymammoth.py exploit [-h] --target TARGET --port PORT --eip EIP
                                 --offset OFFSET --shellcode SHELLCODE
@@ -136,7 +136,7 @@ Required Arguments:
 ```
 
 ## Carve
-```bash
+```
 ./woollymammoth.py carve -h
 usage: woollymammoth.py carve [-h] --shellcode EGGHUNTER [--esp CURR_ESP]
                               [--dest-esp DEST_ESP]

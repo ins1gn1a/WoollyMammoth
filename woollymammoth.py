@@ -8,13 +8,17 @@ from time import sleep
 from random import choice
 from colorama import Fore,Style
 
+__version_info__ = ('v1','00')
+__version__ = '.'.join(__version_info__)
+
 banner = (
 " __    __            _ _                                              _   _     \n"
 "/ / /\ \ \___   ___ | | |_   _  /\/\   __ _ _ __ ___  _ __ ___   ___ | |_| |__  \n"
 "\ \/  \/ / _ \ / _ \| | | | | |/    \ / _` | '_ ` _ \| '_ ` _ \ / _ \| __| '_ \ \n"
 " \  /\  / (_) | (_) | | | |_| / /\/\ \ (_| | | | | | | | | | | | (_) | |_| | | |\n"
 "  \/  \/ \___/ \___/|_|_|\__, \/    \/\__,_|_| |_| |_|_| |_| |_|\___/ \__|_| |_|\n"
-"                         |___/                                                  \n")
+"                         |___/                                                  \n"
++ __version__ + "\n")
 
 parser = argparse.ArgumentParser(description='Woolly Mammoth Fuzzing and Exploitation Toolkit')
 
@@ -66,6 +70,10 @@ badchars.add_argument('--alpha','-a',help="Only send alpha-characters",required=
 badchars.add_argument('--non-alpha','-n',help="Only send non-alpha characters",required=False,dest='nonalpha',action="store_true")
 
 args = parser.parse_args()
+
+if (len(sys.argv) == 1):
+    parser.print_help(sys.stderr)
+    sys.exit(1)
 
 carveShellcode = ""
 

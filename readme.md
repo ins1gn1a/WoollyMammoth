@@ -16,26 +16,30 @@ pip3 install -r requirements.txt
 
 ## Overview
 
-```
-./woollymammoth.py -h
-usage: woollymammoth.py [-h] {fuzz,offset,eip,exploit,carve} ...
+```bash
+woollymammoth.py --help
+usage: woollymammoth.py [-h] {fuzz,offset,badchars,eip,exploit,carve} ...
 
-Woolly Mammoth Socket Fuzzer
+Woolly Mammoth Fuzzing and Exploitation Toolkit
 
 positional arguments:
-  {fuzz,offset,eip,exploit,carve}
+  {fuzz,offset,badchars,eip,exploit,carve}
     fuzz                Socket-based fuzzer that allows command prefix
                         (optional)
     offset              Sending unique string pattern to identify EIP offset
                         in a debugger.
+    badchars            Toolset to help identify bad character usage in target
+                        applications.
     eip                 Enter the offset pattern hex string to identify the
                         offset value.
     exploit             Create buffer-overflow exploit on the command line
                         with optional prefix.
-    carve               Stack manipulation carving
+    carve               Stack manipulation carving (egghunters, shellcode,
+                        etc)
 
 optional arguments:
   -h, --help            show this help message and exit
+
 ```
 
 ## Fuzzing

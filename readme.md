@@ -4,6 +4,7 @@
 * Basic network service fuzzer
 * EIP offset pattern creator
 * Offset pattern detector
+* Bad Character-set sender
 * Vanilla EIP overwrite exploiter
 * Shellcode carver (egghunters, larger payloads, anything!)
 

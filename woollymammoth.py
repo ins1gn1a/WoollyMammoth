@@ -440,8 +440,12 @@ def main():
         
         a = args.egghunter.replace("\\x","")
         scStringLength = str(int(len(args.egghunter) / 4))
-        print (PrintBlue("[i]") + " Carving {} bytes of Shellcode".format(PrintGreen(scStringLength)))
-               
+        
+        if (int(scStringLength) > 32):
+            if (int(scStringLength) % 4 != 0):
+                a = (a + ("90" * (4 - (int(scStringLength) % 4))))
+                scStringLength = str(int(scStringLength) + (4 - (int(scStringLength) % 4)))
+        print (PrintBlue("[i]") + " Carving {} bytes of Shellcode".format(PrintGreen(scStringLength)))       
         for x in allChar:
             if x not in badChars:
                 
@@ -488,15 +492,13 @@ def main():
             carveShellcode += ("\\x50")  
             
             countCarveBytes += 1
-            print(PrintBlue("[i]") + " Carving:\t\t" + str(countCarveBytes) + "/" + str(totalCarveBytes) + " Complete", end='\r')
+            print(PrintBlue("[i]") + " Carving:\t\t\t\t" + PrintGreen(out) + " : " + str(countCarveBytes) + "/" + str(totalCarveBytes) + " Complete", end='\r')
             
         print (PrintGreen("[+]") + " Carved Shellcode Size: {} bytes:\n".format(PrintRed(str(int(len(carveShellcode) / 4)))))
         print ("carvedShell = \"" + carveShellcode + "\"")
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        sys.exit(carveShellcode)
+    main()
+
 
 

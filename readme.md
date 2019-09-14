@@ -43,8 +43,7 @@ optional arguments:
 ```
 
 ## Fuzzing
-
-```
+```bash
 ./woollymammoth.py fuzz -h
 usage: woollymammoth.py fuzz [-h] --target TARGET --port PORT
                              [--prefix PREFIX]
@@ -60,7 +59,7 @@ Required Arguments:
 ```
 
 ## Offset
-```
+```bash
 ./woollymammoth.py offset -h
 usage: woollymammoth.py offset [-h] --target TARGET --port PORT
                                [--prefix PREFIX]
@@ -74,9 +73,33 @@ Required Arguments:
                         Enter the target host IP address.
   --port PORT, -p PORT  Enter the target port number.
 ```
+## Bad Chars
+```bash
+woollymammoth.py badchars --help
+usage: woollymammoth.py badchars [-h] --target TARGET --port PORT --buffer
+                                 BUFFER [--offset OFFSET] [--prefix PREFIX]
+                                 [--alpha] [--non-alpha]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --offset OFFSET, -o OFFSET
+                        Specify the buffer offset to prefix 'A' characters
+                        before the bad characters (if not specified then bad
+                        chars will be sent at the start of the payload)
+  --prefix PREFIX       (Optional) Enter the prefix for the command.
+  --alpha, -a           Only send alpha-characters
+  --non-alpha, -n       Only send non-alpha characters
+
+Required Arguments:
+  --target TARGET, -t TARGET
+                        Enter the target host IP address.
+  --port PORT, -p PORT  Enter the target port number.
+  --buffer BUFFER, -b BUFFER
+                        Specify the buffer size
+```
 
 ## EIP
-```
+```bash
 ./woollymammoth.py eip -h
 usage: woollymammoth.py eip [-h] --eip EIP
 
@@ -88,7 +111,7 @@ Required Arguments:
 ```
 
 ## Exploit
-```
+```bash
 ./woollymammoth.py exploit -h
 usage: woollymammoth.py exploit [-h] --target TARGET --port PORT --eip EIP
                                 --offset OFFSET --shellcode SHELLCODE
@@ -113,7 +136,7 @@ Required Arguments:
 ```
 
 ## Carve
-```
+```bash
 ./woollymammoth.py carve -h
 usage: woollymammoth.py carve [-h] --shellcode EGGHUNTER [--esp CURR_ESP]
                               [--dest-esp DEST_ESP]

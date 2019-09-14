@@ -18,9 +18,11 @@ banner = (
 
 parser = argparse.ArgumentParser(description='Woolly Mammoth Fuzzing and Exploitation Toolkit')
 
+
 subparser = parser.add_subparsers(dest="subparser")
 fuzz = subparser.add_parser('fuzz', help='Socket-based fuzzer that allows command prefix (optional)')
 offset = subparser.add_parser('offset', help='Sending unique string pattern to identify EIP offset in a debugger.')
+badchars = subparser.add_parser('badchars', help='Toolset to help identify bad character usage in target applications.')
 eip = subparser.add_parser('eip', help='Enter the offset pattern hex string to identify the offset value.')
 exploit = subparser.add_parser('exploit', help='Create buffer-overflow exploit on the command line with optional prefix.')
 carve = subparser.add_parser('carve', help='Stack manipulation carving (egghunters, shellcode, etc)')
@@ -53,6 +55,15 @@ carveRequired = carve.add_argument_group('Required Arguments')
 carveRequired.add_argument('--shellcode','-s',help="Enter the shellcode to be converted (e.g. an egghunter)",required=True,dest='egghunter')
 carve.add_argument('--esp','-e',help="Enter the ESP value at the start of the carved shellcode",required=False,dest='curr_esp')
 carve.add_argument('--dest-esp','-d',help="Enter the address that should contain the carved shellcode",required=False,dest='dest_esp')
+
+badcharsRequired = badchars.add_argument_group('Required Arguments')
+badcharsRequired.add_argument('--target','-t',help='Enter the target host IP address.',required=True,default="",dest='target')
+badcharsRequired.add_argument('--port','-p',help='Enter the target port number.',required=True,dest='port',type=int)
+badcharsRequired.add_argument('--buffer','-b',help="Specify the buffer size",required=True,dest='buffer',type=int)
+badchars.add_argument('--offset','-o',help="Specify the buffer offset to prefix 'A' characters before the bad characters (if not specified then bad chars will be sent at the start of the payload)",required=False,dest='offset',type=int,default=0)
+badchars.add_argument('--prefix',help='(Optional) Enter the prefix for the command.',required=False,dest='prefix',default="")
+badchars.add_argument('--alpha','-a',help="Only send alpha-characters",required=False,dest='alpha',action="store_true")
+badchars.add_argument('--non-alpha','-n',help="Only send non-alpha characters",required=False,dest='nonalpha',action="store_true")
 
 args = parser.parse_args()
 
@@ -89,7 +100,47 @@ alpha = [0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,
          0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55,
          0x56, 0x57, 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5e, 0x5f, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
          0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a]
-         
+
+badCharsArray = (
+        "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"
+        "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"
+        "\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f"
+        "\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f"
+        "\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f"
+        "\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f"
+        "\x60\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f"
+        "\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x7b\x7c\x7d\x7e\x7f"
+        "\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a\x8b\x8c\x8d\x8e\x8f"
+        "\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\x9c\x9d\x9e\x9f"
+        "\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa\xab\xac\xad\xae\xaf"
+        "\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba\xbb\xbc\xbd\xbe\xbf"
+        "\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf"
+        "\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda\xdb\xdc\xdd\xde\xdf"
+        "\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea\xeb\xec\xed\xee\xef"
+        "\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa\xfb\xfc\xfd\xfe\xff"
+)
+
+badCharsAlphaArray = (
+        "\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3a\x3b\x3c\x3d\x3e\x3f\x40\x41\x42"
+        "\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55"
+        "\x56\x57\x58\x59\x5a\x5b\x5c\x5d\x5e\x5f\x60\x61\x62\x63\x64\x65\x66\x67\x68"
+        "\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a"
+)
+
+badCharsNonAlphaArray = (
+        "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"
+        "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"
+        "\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2a\x2b\x2c\x2d\x2e\x2f"
+        "\x7b\x7c\x7d\x7e\x7f\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8a"
+        "\x8b\x8c\x8d\x8e\x8f\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9a"
+        "\x9b\x9c\x9d\x9e\x9f\xa0\xa1\xa2\xa3\xa4\xa5\xa6\xa7\xa8\xa9\xaa"
+        "\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5\xb6\xb7\xb8\xb9\xba"
+        "\xbb\xbc\xbd\xbe\xbf\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca"
+        "\xcb\xcc\xcd\xce\xcf\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xd7\xd8\xd9\xda"
+        "\xdb\xdc\xdd\xde\xdf\xe0\xe1\xe2\xe3\xe4\xe5\xe6\xe7\xe8\xe9\xea"
+        "\xeb\xec\xed\xee\xef\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9\xfa"
+        "\xfb\xfc\xfd\xfe\xff"
+)
 
 # Modify badChars as necessary
 # badChars = [ 0x00 ]         
@@ -294,6 +345,44 @@ def main():
         except:
             sys.exit()
             
+    elif (args.subparser == "badchars"):
+        if (args.nonalpha):
+            bcInfo = "Non-Alpha (0x01 - 0x2F, 0x7B - 0xFF)"
+            bcBuf = badCharsNonAlphaArray
+        elif (args.alpha):
+            bcInfo = "Alpha (0x30 - 0x7A)"
+            bcBuf = badCharsAlphaArray
+        else:
+            bcInfo = "All Characters (0x01 - 0xFF)"
+            bcBuf = badCharsArray
+            
+        print (PrintBlue("[i]") + " Bad Chars:\t\t" + bcInfo)
+        
+        try:
+            if (args.offset == 0):
+                buffer = args.prefix.strip() + bcBuf
+                buffer += buffer + ("A" * (args.buffer - len(buffer)))
+            else:
+                buffer = args.prefix.strip()
+                buffer += buffer + ("A" * args.offset)
+                buffer += bcBuf
+                if (args.buffer > len(buffer)):
+                    buffer += "B" * (args.buffer - len(buffer))
+                else:
+                    buffer += "B" * args.buffer
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((host, port))
+            s.settimeout(3)
+            x = s.recv(1024)
+            s.send(buffer.encode())
+            s.close()
+            sleep(0.5)
+            bufStart += 100
+            print ("\nInformation:")
+            print (PrintRed("[!]") + " Check stack around ESP for bad / mangled characters")
+        except:
+            sys.exit()
+            
     elif (args.subparser == "eip"):
         offsetHex = args.eip
         offsetAscii = (bytearray.fromhex(offsetHex).decode())
@@ -387,4 +476,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

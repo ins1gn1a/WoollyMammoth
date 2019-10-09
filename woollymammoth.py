@@ -435,7 +435,7 @@ def main():
     
         startEsp = args.curr_esp
         destEsp = args.dest_esp
-        if (len(startEsp) > 0 and len(destEsp) > 0):
+        if (args.curr_esp and args.dest_esp):
             print (PrintBlue("[i]") + " ESP start of carved code: \t\t{}".format(PrintGreen(startEsp.upper())))
             print (PrintBlue("[i]") + " Code carved to ESP address: \t{}".format(PrintGreen(destEsp.upper())))
         

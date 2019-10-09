@@ -8,7 +8,7 @@ from time import sleep
 from random import choice
 from colorama import Fore,Style
 
-__version_info__ = ('v1','02')
+__version_info__ = ('v1','03')
 __version__ = '.'.join(__version_info__)
 
 banner = (
@@ -278,9 +278,9 @@ def carveEncode(x):
             print (e)
             break
 
-    carveShellcode += ("\\x2d" +(padAndStrip(b4) + padAndStrip(b3) + padAndStrip(b2) + padAndStrip(b1)))
-    carveShellcode += ("\\x2d" +(padAndStrip(c4) + padAndStrip(c3) + padAndStrip(c2) + padAndStrip(c1)))
-    carveShellcode += ("\\x2d" +(padAndStrip(d4) + padAndStrip(d3) + padAndStrip(d2) + padAndStrip(d1)))
+    carveShellcode += ("\"\\x2d" +(padAndStrip(b4) + padAndStrip(b3) + padAndStrip(b2) + padAndStrip(b1)) + "\"\n")
+    carveShellcode += ("\"\\x2d" +(padAndStrip(c4) + padAndStrip(c3) + padAndStrip(c2) + padAndStrip(c1)) + "\"\n")
+    carveShellcode += ("\"\\x2d" +(padAndStrip(d4) + padAndStrip(d3) + padAndStrip(d2) + padAndStrip(d1)) + "\"\n")
 
     return
 
@@ -444,7 +444,7 @@ def main():
         
         if (int(scStringLength) > 32):
             if (int(scStringLength) % 4 != 0):
-                a = (a + ("90" * (4 - (int(scStringLength) % 4))))
+                a = (("90" * (4 - (int(scStringLength) % 4))) + a)
                 scStringLength = str(int(scStringLength) + (4 - (int(scStringLength) % 4)))
         print (PrintBlue("[i]") + " Carving {} bytes of Shellcode".format(PrintGreen(scStringLength)))       
         for x in allChar:
@@ -452,11 +452,11 @@ def main():
                 
                 availChars.append(hex(x))       
         # Zero EAX
-        carveShellcode = (("\\x25\\x4a\\x4d\\x4e\\x55"))
-        carveShellcode += ("\\x25\\x35\\x32\\x31\\x2a")
+        carveShellcode = (("\"\\x25\\x4a\\x4d\\x4e\\x55") + "\"\n")
+        carveShellcode += ("\"\\x25\\x35\\x32\\x31\\x2a" + "\"\n")
         
         # Save ESP into EAX
-        carveShellcode += ("\\x54\\x58")
+        carveShellcode += ("\"\\x54\\x58" + "\"\n")
         
         if args.curr_esp and args.dest_esp:
             # SUB EAX to set ESP to necessary underflow 
@@ -471,7 +471,7 @@ def main():
         else:
             print ("CALCULATE ESP ALIGNMENT MANUALLY")
         # PUSH EAX, POP ESP
-        carveShellcode += ("\\x50\\x5c")
+        carveShellcode += ("\"\\x50\\x5c" + "\"\n")
         
         rev = ("".join(reversed([a[i:i+2] for i in range(0, len(a), 2)])))
         n = 8
@@ -485,18 +485,18 @@ def main():
                 out = (("0" * (8 - len(out))) + out)
 
             # Zero EAX
-            carveShellcode += (("\\x25\\x4a\\x4d\\x4e\\x55"))
-            carveShellcode += ("\\x25\\x35\\x32\\x31\\x2a")
+            carveShellcode += (("\"\\x25\\x4a\\x4d\\x4e\\x55") + "\"\n")
+            carveShellcode += ("\"\\x25\\x35\\x32\\x31\\x2a" + "\"\n")
             #Carve
             carveEncode(out)
             # PUSH EAX, POP ESP
-            carveShellcode += ("\\x50")  
+            carveShellcode += ("\"\\x50" + "\"\n")  
             
             countCarveBytes += 1
             print(PrintBlue("[i]") + " Carving:\t\t\t\t" + PrintGreen(out) + " : " + str(countCarveBytes) + "/" + str(totalCarveBytes) + " Complete", end='\r')
             
         print (PrintGreen("[+]") + " Carved Shellcode Size: {} bytes:\n".format(PrintRed(str(int(len(carveShellcode) / 4)))))
-        print ("carvedShell = \"" + carveShellcode + "\"")
+        print ("carvedShell = (\n" + carveShellcode + ")")
 
 if __name__ == "__main__":
     main()

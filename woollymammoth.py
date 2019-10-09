@@ -435,8 +435,9 @@ def main():
     
         startEsp = args.curr_esp
         destEsp = args.dest_esp
-        print (PrintBlue("[i]") + " ESP start of carved code: \t\t{}".format(PrintGreen(startEsp.upper())))
-        print (PrintBlue("[i]") + " Code carved to ESP address: \t{}".format(PrintGreen(destEsp.upper())))
+        if (len(startEsp) > 0 and len(destEsp) > 0):
+            print (PrintBlue("[i]") + " ESP start of carved code: \t\t{}".format(PrintGreen(startEsp.upper())))
+            print (PrintBlue("[i]") + " Code carved to ESP address: \t{}".format(PrintGreen(destEsp.upper())))
         
         a = args.egghunter.replace("\\x","")
         scStringLength = str(int(len(args.egghunter) / 4))

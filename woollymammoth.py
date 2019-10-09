@@ -8,7 +8,7 @@ from time import sleep
 from random import choice
 from colorama import Fore,Style
 
-__version_info__ = ('v1','01')
+__version_info__ = ('v1','02')
 __version__ = '.'.join(__version_info__)
 
 banner = (

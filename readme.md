@@ -1,5 +1,5 @@
 # WoollyMammoth
-
+![](https://img.shields.io/maintenance/yes/2021.svg)
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/ins1gn1a/WoollyMammoth.svg)](https://GitHub.com/ins1gn1a/WoollyMammoth/pulls/)
 [![GitHub contributors](https://img.shields.io/github/contributors/ins1gn1a/WoollyMammoth.svg)](https://GitHub.com/ins1gn1a/WoollyMammoth/graphs/contributors/)
 [![GitHub issues](https://img.shields.io/github/issues/ins1gn1a/WoollyMammoth)](https://github.com/ins1gn1a/WoollyMammoth/issues)

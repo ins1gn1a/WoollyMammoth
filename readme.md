@@ -1,5 +1,11 @@
 # WoollyMammoth
 
+[![GitHub pull-requests](https://img.shields.io/github/issues-pr/ins1gn1a/WoollyMammoth.svg)](https://GitHub.com/ins1gn1a/WoollyMammoth/pull/)
+[![GitHub contributors](https://img.shields.io/github/contributors/ins1gn1a/WoollyMammoth.svg)](https://GitHub.com/ins1gn1a/WoollyMammoth/graphs/contributors/)
+![](https://img.shields.io/github/issues/ins1gn1a/WoollyMammoth)
+![](https://img.shields.io/github/stars/ins1gn1a/WoollyMammoth)
+![](https://img.shields.io/github/license/ins1gn1a/WoollyMammoth)
+
 ## Features
 * Basic network service fuzzer
 * EIP offset pattern creator
